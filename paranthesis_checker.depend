@@ -1,0 +1,6 @@
+# depslib dependency file v1.0
+1562140817 source:c:\users\animesh\desktop\c code\paranthesis_checker\main.c
+	<stdio.h>
+	<conio.h>
+	<string.h>
+
