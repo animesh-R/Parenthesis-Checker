@@ -1,58 +1,123 @@
 #include <stdio.h>
-#include <conio.h>
-#include <string.h>
-#define MAX 10
-int top = -1;
-int stk[MAX];
-void push(char);
-char pop();
+#include <stdlib.h>
 
-void main()
+struct stack
 {
-char exp[MAX],temp;
-int i, flag=1;
+    int size;
+    int top;
+    char *arr;
+};
 
-printf("Enter an expression : ");
-gets(exp);
-for(i=0;i<strlen(exp);i++)
+int isEmpty(struct stack *a)
 {
-if(exp[i]=='(' || exp[i]=='{' || exp[i]=='[')
-push(exp[i]);
-if(exp[i]==')' || exp[i]=='}' || exp[i]==']')
-if(top == -1)
-flag=0;
-else
+    if (a->top == -1)
+    {
+        return 1;
+    }
+    return 0;
+}
+
+int isFull(struct stack *a)
 {
-temp=pop();
-if(exp[i]==')' && (temp=='{' || temp=='['))
-flag=0;
-if(exp[i]=='}' && (temp=='(' || temp=='['))
-flag=0;
-if(exp[i]==']' && (temp=='(' || temp=='{'))
-flag=0;
+    if (a->top == a->size - 1)
+    {
+        return 1;
+    }
+    return 0;
 }
-}
-if(top>=0)
-flag=0;
-if(flag==1)
-printf("\n Valid expression");
-else
-printf("\n Invalid expression");
-}
-void push(char c)
+
+void push(struct stack *a, char value)
 {
-if(top == (MAX-1))
-printf("Stack Overflow\n");
-else
-{
-top=top+1;
-stk[top] = c;
+    if (isFull(a))
+    {
+        printf("Stack is overflow!!!");
+    }
+    else
+    {
+        a->top++;
+        a->arr[a->top] = value;
+    }
 }
-}
-char pop()
+
+char pop(struct stack *a)
 {
-if(top == -1)
-printf("\n Stack Underflow");
-else
-return(stk[top--]);
+    if (isEmpty(a))
+    {
+        printf("Stack is underflow!!!");
+        return -1;
+    }
+    else
+    {
+        char val = a->arr[a->top];
+        a->top--;
+        return val;
+    }
+}
+
+int match(char a, char b)
+{
+    if (a == '(' && b == ')')
+    {
+        return 1;
+    }
+    if (a == '{' && b == '}')
+    {
+        return 1;
+    }
+    if (a == '[' && b == ']')
+    {
+        return 1;
+    }
+    return 0;
+}
+
+int parenthesis_matching(char *exp)
+{
+    struct stack *a;
+    a->size = 100;
+    a->top = -1;
+    a->arr = (char *)malloc(a->size * sizeof(char));
+
+    for (int i = 0; exp[i] != '\0'; i++)
+    {
+        if (exp[i] == '(' || exp[i] == '{' || exp[i] == '[')
+        {
+            push(a, exp[i]);
+        }
+        else if (exp[i] == ')' || exp[i] == '}' || exp[i] == ']')
+        {
+            if (isEmpty(a))
+            {
+                return 0;
+            }
+            else
+            {
+                char pop_ch = pop(a);
+                if (!match(pop_ch, exp[i]))
+                {
+                    return 0;
+                }
+            }
+        }
+    }
+
+    if (isEmpty(a))
+    {
+        return 1;
+    }
+    return 0;
+}
+
+int main()
+{
+    char *exp = "[(81++)]({(--84**)})";
+    if (parenthesis_matching(exp))
+    {
+        printf("\nThe parenthesis is balanced\n");
+    }
+    else
+    {
+        printf("\nThe parenthesis is not balanced\n");
+    }
+    return 0;
 }
